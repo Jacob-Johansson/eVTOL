@@ -4,23 +4,31 @@ import math
 from CalcAndCollect import *
 
 def getZValues():
+    #Open excel file
     df = pd.read_excel('AnchorHeights.xlsx')
 
+    #Ask for row number
     rowNumber = input("Row number: ")
     workingRowNumber = int(rowNumber) - 2
 
+    #Ask for iteration
     iteration = input("Which iteration?")
 
+    #Ask for actual X,Y,Z of the drone
     actualX = input("Actual X:")
     actualY = input("Actual Y:")
     actualZ = input("Actual Z:")
     actual = [actualX, actualY, actualZ]
 
+    #Put z values of anchors into array
     array = []
     for i in range(6):
         array.append(df.iloc[workingRowNumber, i])
 
+    #Get estimated value from function passing array as argument
     estimatedValues = CalcPos(array)
+
+    #Calculate error
     index = 1
     partial = []
     w = [0,0,0]
@@ -35,6 +43,7 @@ def getZValues():
     #How many columns we go right
     moveRight = switch(iteration)
 
+    #Write on the excel file
     df.iloc[workingRowNumber, 6+(3*moveRight)] = actualX
     df.iloc[workingRowNumber, 7+(3*moveRight)] = actualY
     df.iloc[workingRowNumber, 8+(3*moveRight)] = actualZ
