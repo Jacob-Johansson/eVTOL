@@ -39,6 +39,7 @@ def getZValues():
     df.iloc[workingRowNumber, 7+(3*moveRight)] = actualY
     df.iloc[workingRowNumber, 8+(3*moveRight)] = actualZ
     df.iloc[workingRowNumber, 21+(1*moveRight)] = error
+    df.to_excel('AnchorHeights.xlsx', index=False)
 
 def switch(iteration):
     if iteration == 1:
