@@ -1,64 +1,63 @@
-from IPython.display import display
-import pandas as pd
+import csv
 import math
 from CalcAndCollect import *
 
+
+
 def getZValues():
     #Open excel file
-    df = pd.read_excel('AnchorHeights.xlsx')
+    with open('AnchorHeights.csv', 'r') as file, open('AvgError.csv', 'w') as outf:
+        rowIndex = -1
+        dataList = list(csv.reader(file))
+        writer = csv.writer(outf)
+        #Hide headers
+        dataList=dataList[1:]
+        #for row in dataList:
+        for row in range(0,2):
+            rowIndex += 1
+            for i in range(0, 5):
+                print('Row: ' + str(rowIndex + 1) +  ' Iteration: ' + str(i + 1))
 
-    #Ask for row number
-    rowNumber = input("Row number: ")
-    workingRowNumber = int(rowNumber) - 2
+                #Ask for actual X,Y,Z of the drone
+                actualX = input("Actual X:")
+                actualY = input("Actual Y:")
+                actualZ = input("Actual Z:")
+                actual = [actualX, actualY, actualZ]
 
-    #Ask for iteration
-    iteration = input("Which iteration?")
+                #SUBJECT TO CHANGE: KEEPING ACTUAL XYZ FOR ALL 5 POSITIONS MOST LIKELY NOT NEEDED
+                #Write actual XYZ to csv file 
+                rowToChange = row
+                rowToChange[6 + 3*i] = actualX
+                rowToChange[7 + 3*i] = actualX
+                rowToChange[8 + 3*i] = actualX
+                print(rowToChange)
 
-    #Ask for actual X,Y,Z of the drone
-    actualX = input("Actual X:")
-    actualY = input("Actual Y:")
-    actualZ = input("Actual Z:")
-    actual = [actualX, actualY, actualZ]
 
-    #Put z values of anchors into array
-    array = []
-    for i in range(6):
-        array.append(df.iloc[workingRowNumber, i])
+                #Take z values of anchors from csv file
+                array = []
+                for column in range(0,6):
+                    array.append(float(dataList[rowIndex][column]))
+                print(array)
+                #Get estimated value from function passing array as argument
+                estimatedValues = CalcPos(array)
 
-    #Get estimated value from function passing array as argument
-    estimatedValues = CalcPos(array)
+                #Calculate error
+                index = 1
+                partial = []
+                w = [0,0,0]
+                for j in estimatedValues:
+                    partial = [int(j[0])-int(actual[0]), int(j[1])-int(actual[1]), int(j[2])-int(actual[2])]
+                    w = [w[0]+partial[0],w[1]+partial[1],w[2]+partial[2]]
+                    index+=1
+                finalArray = [w[0]/index, w[1]/index, w[2]/index]
+                error = math.sqrt(finalArray[0]**2+finalArray[1]**2+finalArray[2]**2)
+                print(error)
+                #Add errors to row
+                rowToChange[21 + i] = error
 
-    #Calculate error
-    index = 1
-    partial = []
-    w = [0,0,0]
-    for i in estimatedValues:
-        partial = [int(i[0])-int(actual[0]), int(i[1])-int(actual[1]), int(i[2])-int(actual[2])]
-        w = [w[0]+partial[0],w[1]+partial[1],w[2]+partial[2]]
-        index+=1
-    finalArray = [w[0]/index, w[1]/index, w[2]/index]
-    error = math.sqrt(finalArray[0]**2+finalArray[1]**2+finalArray[2]**2)
-    print(error)
+            #Add average error to row
+            rowToChange[26] = rowToChange[21:25] / 5
+            #Write row to new file
+            writer.writerow(rowToChange)
 
-    #How many columns we go right
-    moveRight = switch(iteration)
-
-    #Write on the excel file
-    df.iloc[workingRowNumber, 6+(3*moveRight)] = actualX
-    df.iloc[workingRowNumber, 7+(3*moveRight)] = actualY
-    df.iloc[workingRowNumber, 8+(3*moveRight)] = actualZ
-    df.iloc[workingRowNumber, 21+(1*moveRight)] = error
-    df.to_excel('AnchorHeights.xlsx', index=False)
-
-def switch(iteration):
-    if iteration == 1:
-        return 0
-    elif iteration == 2:
-        return 1
-    elif iteration == 3:
-        return 2
-    elif iteration == 4:
-        return 3
-    else:
-        return 4
 getZValues()

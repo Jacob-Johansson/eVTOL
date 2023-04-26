@@ -47,7 +47,7 @@ def CalcPos(zValues):
 
 		received_data = ser.readline()              #read serial port
 		#sleep(1)
-		print ("Something recievd: "+ str(received_data))          #print received data
+		print ("Something received: "+ str(received_data))          #print received data
 
 		if len(received_data)>5:
 
