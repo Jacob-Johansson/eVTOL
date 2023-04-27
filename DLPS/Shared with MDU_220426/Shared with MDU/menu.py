@@ -10,6 +10,7 @@ def getZValues():
         writer = csv.writer(outf)
         #Hide headers
         dataList=dataList[1:]
+        rowToCHange = []
         for row in dataList:
         #for row in range(0,2):
             rowIndex += 1
@@ -36,6 +37,7 @@ def getZValues():
                 rowToChange[7 + 3*i] = actualY
                 rowToChange[8 + 3*i] = actualZ
                 print(rowToChange)
+                #print(sum(rowToChange[21:25]))
 
                 #Get estimated value from function passing array as argument
                 estimatedValues = CalcPos(array)
@@ -52,10 +54,13 @@ def getZValues():
                 error = math.sqrt(finalArray[0]**2+finalArray[1]**2+finalArray[2]**2)
                 print(error)
                 #Add errors to row
-                rowToChange[21 + i] = error
+                rowToChange[21 + i] = str(error)
 
             #Add average error to row
-            rowToChange[26] = sum(rowToChange[21:25]) / 5
+            for i in range(0,4):
+                sumError += float(rowToChange[22 + i])
+            avgError = sumError / 5
+            rowToChange[26] = str(avgError)
             #Write row to new file
             writer.writerow(rowToChange)
 
