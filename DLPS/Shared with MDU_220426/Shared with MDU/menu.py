@@ -2,8 +2,6 @@ import csv
 import math
 from CalcAndCollect import *
 
-
-
 def getZValues():
     #Open excel file
     with open('AnchorHeights.csv', 'r') as file, open('AvgError.csv', 'w') as outf:
@@ -12,12 +10,19 @@ def getZValues():
         writer = csv.writer(outf)
         #Hide headers
         dataList=dataList[1:]
-        #for row in dataList:
-        for row in range(0,2):
+        for row in dataList:
+        #for row in range(0,2):
             rowIndex += 1
             for i in range(0, 5):
                 print('Row: ' + str(rowIndex + 1) +  ' Iteration: ' + str(i + 1))
 
+
+                #Take z values of anchors from csv file
+                array = []
+                for column in range(0,6):
+                    array.append(float(dataList[rowIndex][column]))
+                print(array)
+                
                 #Ask for actual X,Y,Z of the drone
                 actualX = input("Actual X:")
                 actualY = input("Actual Y:")
@@ -28,16 +33,10 @@ def getZValues():
                 #Write actual XYZ to csv file 
                 rowToChange = row
                 rowToChange[6 + 3*i] = actualX
-                rowToChange[7 + 3*i] = actualX
-                rowToChange[8 + 3*i] = actualX
+                rowToChange[7 + 3*i] = actualY
+                rowToChange[8 + 3*i] = actualZ
                 print(rowToChange)
 
-
-                #Take z values of anchors from csv file
-                array = []
-                for column in range(0,6):
-                    array.append(float(dataList[rowIndex][column]))
-                print(array)
                 #Get estimated value from function passing array as argument
                 estimatedValues = CalcPos(array)
 
@@ -56,7 +55,7 @@ def getZValues():
                 rowToChange[21 + i] = error
 
             #Add average error to row
-            rowToChange[26] = rowToChange[21:25] / 5
+            rowToChange[26] = sum(rowToChange[21:25]) / 5
             #Write row to new file
             writer.writerow(rowToChange)
 
