@@ -16,7 +16,7 @@ def getZValues():
         print(dataList[0])
         writeToFile(dataList[0])
         #Hide headers
-        z=int(input("Enter which row you want to start: "))
+        z=int(input("Enter which row you want to start on: "))
         dataList=dataList[z:]
         rowToCHange = []
         for row in dataList:
@@ -48,7 +48,7 @@ def getZValues():
                 #print(sum(rowToWrite[21:25]))
 
                 #Get estimated value from function passing array as argument
-                estimatedValues = CalcPos(array)
+                estimatedValues = calcPos(array)
 
                 #Calculate error
                 index = 1

@@ -40,11 +40,11 @@ delta_dist = [[0,0,0,0,0],[0,0,0,0,0],[0,0,0,0,0]]
 
 
 #Call this function to run data calculation and collection
-def CalcPos(zValues):
+def calcPos(zValues):
 	i = 0
 	iteration = 0
 	estimatedPosArray = []
-	while iteration < 10:
+	while iteration < 200:
 		print('Iteration ' + str(iteration))
 		received_data = ser.readline()              #read serial port
 		#sleep(1)
@@ -69,12 +69,12 @@ def CalcPos(zValues):
 						msg_b6pos = json.loads(datavars[6])
 						msg_dDist = json.loads(datavars[7])
 
-						bpos1=(6,7.1,zValues[0])
-						bpos2=(0.1,0,zValues[1])
-						bpos3=(0,7.25,zValues[2])
-						bpos4=(2.7,14.4,zValues[3])
-						bpos5=(8.25,13.5,zValues[4])
-						bpos6=(10.3,0,zValues[5])
+						bpos1=(0,0,zValues[0])
+						bpos2=(0,8.65,zValues[1])
+						bpos3=(5,8.65,zValues[2])
+						bpos4=(10,8.75,zValues[3])
+						bpos5=(10,0,zValues[4])
+						bpos6=(5,0,zValues[5])
 							
 						#these are the raw latest differences
 						delta_dist[i] = (msg_dDist[0],msg_dDist[1],msg_dDist[2],msg_dDist[3],msg_dDist[4])
