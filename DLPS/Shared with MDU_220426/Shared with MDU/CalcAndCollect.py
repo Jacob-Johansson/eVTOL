@@ -37,10 +37,10 @@ print("Start listening for UART messages from nRF board")
 
 #init some stuff
 delta_dist = [[0,0,0,0,0],[0,0,0,0,0],[0,0,0,0,0]]
-i = 0
+
 
 #Call this function to run data calculation and collection
-def calcPos(zValues):
+def CalcPos(zValues):
 	i = 0
 	iteration = 0
 	estimatedPosArray = []
@@ -69,12 +69,12 @@ def calcPos(zValues):
 						msg_b6pos = json.loads(datavars[6])
 						msg_dDist = json.loads(datavars[7])
 
-						bpos1=(0,0,zValues[0])
-						bpos2=(0,8.65,zValues[1])
-						bpos3=(5,8.65,zValues[2])
-						bpos4=(10,8.75,zValues[3])
-						bpos5=(10,0,zValues[4])
-						bpos6=(5,0,zValues[5])
+						bpos1=(6,7.1,zValues[0])
+						bpos2=(0.1,0,zValues[1])
+						bpos3=(0,7.25,zValues[2])
+						bpos4=(2.7,14.4,zValues[3])
+						bpos5=(8.25,13.5,zValues[4])
+						bpos6=(10.3,0,zValues[5])
 							
 						#these are the raw latest differences
 						delta_dist[i] = (msg_dDist[0],msg_dDist[1],msg_dDist[2],msg_dDist[3],msg_dDist[4])
@@ -117,7 +117,7 @@ def calcPos(zValues):
 							array_pointer_5 = ctypes.cast(result_obj, ctypes.POINTER(ArrayType))
 
 							print("Calculated position (6): "+str((array_pointer.contents[0],array_pointer.contents[1],array_pointer.contents[2])))
-							print("Calculated position (5): "+str((array_pointer_5.contents[0],array_pointer_5.contents[1],array_pointer_5.contents[2])))
+							#print("Calculated position (5): "+str((array_pointer_5.contents[0],array_pointer_5.contents[1],array_pointer_5.contents[2])))
 
 							#pack up results in a ; delimited string
 							msgstr_5 = str(msg_statuscode)+";"+str(int(array_pointer_5.contents[4]))+";"+str(array_pointer_5.contents[0])+";"+str(array_pointer_5.contents[1])+";"+str(array_pointer_5.contents[2])+";"+str(bpos1)+";"+str(bpos2)+";"+str(bpos3)+";"+str(bpos4)+";"+str(bpos5)+";"+str(bpos6)+";"+str(msg_dDist)+"\n"
@@ -133,7 +133,8 @@ def calcPos(zValues):
 						else:
 							("Bad data (unrealistic distances). Skipping iteration")
 						i=i+1
-						if i==3: i = 0
+						if i==3:
+							i = 0
 					else:
 						print("Bad data (Timeout or dropped frame) Skipping iteration")
 				except Exception as e:
@@ -145,4 +146,5 @@ def calcPos(zValues):
 			UDPMESSAGE = bytearray("NoData;".encode())
 			sock.sendto(UDPMESSAGE, (UDP_IP, UDP_PORT))
 
+		iteration+=1
 	return estimatedPosArray
