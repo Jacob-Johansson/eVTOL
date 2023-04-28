@@ -40,7 +40,7 @@ delta_dist = [[0,0,0,0,0],[0,0,0,0,0],[0,0,0,0,0]]
 
 
 #Call this function to run data calculation and collection
-def CalcPos(zValues):
+def calcPos(zValues):
 	i = 0
 	iteration = 0
 	estimatedPosArray = []

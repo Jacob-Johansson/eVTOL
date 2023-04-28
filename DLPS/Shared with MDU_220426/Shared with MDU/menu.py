@@ -48,7 +48,7 @@ def getZValues():
                 #print(sum(rowToWrite[21:25]))
 
                 #Get estimated value from function passing array as argument
-                estimatedValues = CalcPos(array)
+                estimatedValues = calcPos(array)
 
                 #Calculate error
                 index = 1
