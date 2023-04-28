@@ -2,19 +2,12 @@ import csv
 import math
 from CalcAndCollect import *
 
-def writeToFile(row):
-    with open('outputFile.csv', 'a',newline='') as csv_file:
-        writer = csv.writer(csv_file)
-        writer.writerow(row)
-
-
 def getZValues():
     #Open excel file
-    with open('AnchorHeights.csv', 'r') as file:
+    with open('AnchorHeights.csv', 'r') as file, open('AvgError.csv', 'w') as outf:
         rowIndex = -1
         dataList = list(csv.reader(file))
-        print(dataList[0])
-        writeToFile(dataList[0])
+        writer = csv.writer(outf)
         #Hide headers
         z=int(input("Enter which row you want to start on: "))
         dataList=dataList[z:]
@@ -40,12 +33,12 @@ def getZValues():
 
                 #SUBJECT TO CHANGE: KEEPING ACTUAL XYZ FOR ALL 5 POSITIONS MOST LIKELY NOT NEEDED
                 #Write actual XYZ to csv file 
-                rowToWrite = row
-                rowToWrite[6 + 3*i] = actualX
-                rowToWrite[7 + 3*i] = actualY
-                rowToWrite[8 + 3*i] = actualZ
-                print(rowToWrite)
-                #print(sum(rowToWrite[21:25]))
+                rowToChange = row
+                rowToChange[6 + 3*i] = actualX
+                rowToChange[7 + 3*i] = actualY
+                rowToChange[8 + 3*i] = actualZ
+                print(rowToChange)
+                #print(sum(rowToChange[21:25]))
 
                 #Get estimated value from function passing array as argument
                 estimatedValues = calcPos(array)
@@ -60,19 +53,16 @@ def getZValues():
                     index+=1
                 finalArray = [w[0]/index, w[1]/index, w[2]/index]
                 error = math.sqrt(finalArray[0]**2+finalArray[1]**2+finalArray[2]**2)
-                #print(error)
+                print(error)
                 #Add errors to row
-                rowToWrite[21 + i] = str(error)
+                rowToChange[21 + i] = str(error)
 
             #Add average error to row
-            sumError = 0
-            for k in range(0,5):
-                sumError += float(rowToWrite[21 + k])
-                print(rowToWrite[21 + k])
-
+            for i in range(0,4):
+                sumError += float(rowToChange[22 + i])
             avgError = sumError / 5
-            rowToWrite[26] = str(avgError)
-            print(rowToWrite[0])
+            rowToChange[26] = str(avgError)
             #Write row to new file
-            writeToFile(rowToWrite)
+            writer.writerow(rowToChange)
+
 getZValues()
