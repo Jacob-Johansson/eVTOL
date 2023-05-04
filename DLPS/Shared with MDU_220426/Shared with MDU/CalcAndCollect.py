@@ -23,32 +23,36 @@ class bpos(ctypes.Structure):
 class ddist(ctypes.Structure):
         _fields_ = [("a_b", ctypes.c_double),("a_c",ctypes.c_double),("a_d",ctypes.c_double)]
 
+
 # Define cfunction
 pos_calc_fn_obj = ctypes.CDLL(SO_FILENAME)
 pos_calc_fn_obj_5 = ctypes.CDLL(SO_FILENAME_5)
 
-# PC Partner adress and port:
-ser = serial.Serial ("/dev/ttyS0", 115200,timeout = 1)    #Open port with baud rate
-sock = socket.socket(socket.AF_INET, # Internet
-                     socket.SOCK_DGRAM) # UDP
-
-# Start listening for UART messages from nRF board. When recieved, calculate position and send to PC over UDP
-print("Start listening for UART messages from nRF board")
-
-#init some stuff
 delta_dist = [[0,0,0,0,0],[0,0,0,0,0],[0,0,0,0,0]]
+
 
 
 #Call this function to run data calculation and collection
 def calcPos(zValues):
+
+	# PC Partner adress and port:
+	ser = serial.Serial ("/dev/ttyS0", 115200,timeout = 1)    #Open port with baud rate
+	sock = socket.socket(socket.AF_INET, # Internet
+	                     socket.SOCK_DGRAM) # UDP
+	# Start listening for UART messages from nRF board. When recieved, calculate position and send to PC over UDP
+	print("Start listening for UART messages from nRF board")
+
+	#Try to flush out old values still in the buffer
+	ser.read_all()
+
 	i = 0
 	iteration = 0
 	estimatedPosArray = []
 	while iteration < 200:
 		print('Iteration ' + str(iteration))
 		received_data = ser.readline()              #read serial port
-		#sleep(1)
 		print ("Something received: "+ str(received_data))          #print received data
+		sleep(.1)
 
 		if len(received_data)>5:
 
@@ -69,12 +73,12 @@ def calcPos(zValues):
 						msg_b6pos = json.loads(datavars[6])
 						msg_dDist = json.loads(datavars[7])
 
-						bpos1=(6,7.1,zValues[0])
-						bpos2=(0.1,0,zValues[1])
-						bpos3=(0,7.25,zValues[2])
-						bpos4=(2.7,14.4,zValues[3])
-						bpos5=(8.25,13.5,zValues[4])
-						bpos6=(10.3,0,zValues[5])
+						bpos1=(0,0,zValues[0])
+						bpos2=(0,8.65,zValues[1])
+						bpos3=(5,8.65,zValues[2])
+						bpos4=(10,8.75,zValues[3])
+						bpos5=(10,0,zValues[4])
+						bpos6=(5,0,zValues[5])
 							
 						#these are the raw latest differences
 						delta_dist[i] = (msg_dDist[0],msg_dDist[1],msg_dDist[2],msg_dDist[3],msg_dDist[4])
@@ -147,4 +151,5 @@ def calcPos(zValues):
 			sock.sendto(UDPMESSAGE, (UDP_IP, UDP_PORT))
 
 		iteration+=1
+	ser.close()
 	return estimatedPosArray

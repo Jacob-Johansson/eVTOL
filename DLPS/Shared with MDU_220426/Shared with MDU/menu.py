@@ -7,6 +7,26 @@ def writeToFile(row):
         writer = csv.writer(csv_file)
         writer.writerow(row)
 
+def calculateError(estimatedValues, actualValues):
+    j = 0
+    error = []
+    errorSum = 0
+    for values in estimatedValues:
+        error[j] = (float(estimatedValues[0]) - float(actualValues[0]))**2 + (float(estimatedValues[1]) - float(actualValues[1]))**2 + (float(estimatedValues[2]) - float(actualValues[2]))**2
+        error[j] = math.sqrt(error[j])
+        j +=1
+
+    error.sort()
+    length = len(error)
+    median = math.floor(length / 2)
+    medianRange = math.floor(len(error) / 10)
+    k = 0
+    #For all values between lower and upper median value
+    for i in range(median - medianRange, median + medianRange):
+        errorSum += error[i] 
+        k+= 1
+    return errorSum / k
+
 
 def getZValues():
     #Open excel file
@@ -18,7 +38,6 @@ def getZValues():
         #Hide headers
         z=int(input("Enter which row you want to start on: "))
         dataList=dataList[z:]
-        rowToCHange = []
         for row in dataList:
         #for row in range(0,2):
             rowIndex += 1
@@ -29,7 +48,8 @@ def getZValues():
                 #Take z values of anchors from csv file
                 array = []
                 for column in range(0,6):
-                    array.append(float(dataList[rowIndex][column]))
+		    #Add offset from ground to sensor when placing it (0.045 meters)
+                    array.append(float(dataList[rowIndex][column]) + 0.045)
                 print(array)
                 
                 #Ask for actual X,Y,Z of the drone
@@ -50,19 +70,22 @@ def getZValues():
                 #Get estimated value from function passing array as argument
                 estimatedValues = calcPos(array)
 
+                rowToWrite[21 + i] = calculateError(estimatedValues, actual)
+
+
                 #Calculate error
-                index = 1
-                partial = []
-                w = [0,0,0]
-                for j in estimatedValues:
-                    partial = [int(j[0])-int(actual[0]), int(j[1])-int(actual[1]), int(j[2])-int(actual[2])]
-                    w = [w[0]+partial[0],w[1]+partial[1],w[2]+partial[2]]
-                    index+=1
-                finalArray = [w[0]/index, w[1]/index, w[2]/index]
-                error = math.sqrt(finalArray[0]**2+finalArray[1]**2+finalArray[2]**2)
+                #index = 1
+                #partial = []
+                #w = [0,0,0]
+                #for j in estimatedValues:
+                #    partial = [float(j[0])-float(actual[0]), float(j[1])-float(actual[1]), float(j[2])-float(actual[2])]
+                #    w = [w[0]+partial[0],w[1]+partial[1],w[2]+partial[2]]
+                #    index+=1
+                #finalArray = [w[0]/index, w[1]/index, w[2]/index]
+                #error = math.sqrt(finalArray[0]**2+finalArray[1]**2+finalArray[2]**2)
                 #print(error)
                 #Add errors to row
-                rowToWrite[21 + i] = str(error)
+                #rowToWrite[21 + i] = str(error)
 
             #Add average error to row
             sumError = 0
