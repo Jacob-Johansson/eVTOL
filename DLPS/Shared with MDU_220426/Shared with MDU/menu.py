@@ -19,7 +19,7 @@ def calculateError(estimatedValues, actualValues):
     error.sort()
     length = len(error)
     median = math.floor(length / 2)
-    medianRange = math.floor(len(error) / 10)
+    medianRange = math.floor((len(error) / 10) /2)
     k = 0
     #For all values between lower and upper median value
     for i in range(median - medianRange, median + medianRange):
@@ -70,7 +70,7 @@ def getZValues():
                 #Get estimated value from function passing array as argument
                 estimatedValues = calcPos(array)
 
-                rowToWrite[21 + i] = calculateError(estimatedValues, actual)
+                rowToWrite[21 + i] = str(calculateError(estimatedValues, actual))
 
 
                 #Calculate error
