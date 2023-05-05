@@ -7,14 +7,26 @@ def writeToFile(row):
         writer = csv.writer(csv_file)
         writer.writerow(row)
 
-def calculateError(estimatedValues, actualValues):
-    j = 0
+def writeRawErrorToFile(writer, estimatedX, estimatedY, estimatedZ, actualX, actualY, actualZ, errorX, errorY, errorZ, errorDistance, row, iteration):
+    writer.writerow([str(row), str(iteration), str(actualX), str(actualY), str(actualZ), str(estimatedX), str(estimatedY), str(estimatedZ), str(errorX), str(errorY), str(errorZ), str(errorDistance)])
+
+def automatePosition():
+    return [()]
+
+def calculateError(estimatedValues, actualValues, rawErrorWriter, rowIndex):
     error = []
     errorSum = 0
+    estimatedIndex = 0
     for values in estimatedValues:
-        error[j] = (float(estimatedValues[0]) - float(actualValues[0]))**2 + (float(estimatedValues[1]) - float(actualValues[1]))**2 + (float(estimatedValues[2]) - float(actualValues[2]))**2
-        error[j] = math.sqrt(error[j])
-        j +=1
+        errorX = float(values[0]) - float(actualValues[0])
+        errorY = float(values[1]) - float(actualValues[1])
+        errorZ = float(values[2]) - float(actualValues[2])
+        errorValue = (errorX)**2 + (errorY)**2 + (errorZ)**2
+        errorValue = math.sqrt(errorValue)
+        error.append(errorValue)
+
+        writeRawErrorToFile(rawErrorWriter, float(values[0]), float(values[1]), float(values[2]), float(actualValues[0]), float(actualValues[1]), float(actualValues[2]), errorX, errorY, errorZ, errorValue, rowIndex, estimatedIndex)
+        estimatedIndex += 1
 
     error.sort()
     length = len(error)
@@ -27,6 +39,7 @@ def calculateError(estimatedValues, actualValues):
         k+= 1
     return errorSum / k
 
+predefinedPos = [["2.2", "-0.2", "0.17"], ["0.05", "2.65", "0.17"], ["2.27", "5.01", "0.17"], ["4.5", "2.57", "0.17"], ["2.08", "2.6", "0.17"]]
 
 def getZValues():
     #Open excel file
@@ -38,6 +51,13 @@ def getZValues():
         #Hide headers
         z=int(input("Enter which row you want to start on: "))
         dataList=dataList[z:]
+
+	# Setup writing raw data to file
+        rawErrorFileHandler = open('rawErrorData.csv', 'a', newline='')
+        rawErrorWriter = csv.writer(rawErrorFileHandler)
+        rawErrorWriter.writerow(["Row", "Iteration", "Actual x", "Actual y", "Actual z", "Estimated x", "Estimated y", "Estimated z", "Error x", "Error y", "Error z", "Error distance"])
+
+        automate = input("Do you want to use predefined positions(papers taped to the floor): y/n")
         for row in dataList:
         #for row in range(0,2):
             rowIndex += 1
@@ -51,12 +71,21 @@ def getZValues():
 		    #Add offset from ground to sensor when placing it (0.045 meters)
                     array.append(float(dataList[rowIndex][column]) + 0.045)
                 print(array)
+
+
                 
-                #Ask for actual X,Y,Z of the drone
-                actualX = input("Actual X:")
-                actualY = input("Actual Y:")
-                actualZ = input("Actual Z:")
-                actual = [actualX, actualY, actualZ]
+                if automate == "n":
+                    #Ask for actual X,Y,Z of the drone
+                    actualX = input("Actual X:")
+                    actualY = input("Actual Y:")
+                    actualZ = input("Actual Z:")
+                    actual = [actualX, actualY, actualZ]
+                else:
+                    actualX = predefinedPos[i][0]
+                    actualY = predefinedPos[i][1]
+                    actualZ = predefinedPos[i][2]
+                    actual = predefinedPos[i]
+                    input('Confirm that anchor is in position ' + str(i+1))
 
                 #SUBJECT TO CHANGE: KEEPING ACTUAL XYZ FOR ALL 5 POSITIONS MOST LIKELY NOT NEEDED
                 #Write actual XYZ to csv file 
@@ -70,7 +99,7 @@ def getZValues():
                 #Get estimated value from function passing array as argument
                 estimatedValues = calcPos(array)
 
-                rowToWrite[21 + i] = str(calculateError(estimatedValues, actual))
+                rowToWrite[21 + i] = str(calculateError(estimatedValues, actual, rawErrorWriter, rowIndex))
 
 
                 #Calculate error
@@ -98,4 +127,7 @@ def getZValues():
             print(rowToWrite[0])
             #Write row to new file
             writeToFile(rowToWrite)
+
+	# Close writing data to file
+	#rawErrorFileHandler.close()
 getZValues()

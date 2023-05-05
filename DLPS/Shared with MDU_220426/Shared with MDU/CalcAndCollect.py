@@ -59,6 +59,7 @@ def calcPos(zValues):
 			# some data was received! Clean up and split to separate vars
 			datastring = str(received_data).replace("b\'","").replace("\\n\'","")
 			datavars = str(datastring).split(";")
+			print(datavars)
 
 			#if enough data (messages can clip sometimes, if so discard)
 			if len(datavars)>5:
@@ -74,11 +75,11 @@ def calcPos(zValues):
 						msg_dDist = json.loads(datavars[7])
 
 						bpos1=(0,0,zValues[0])
-						bpos2=(0,8.65,zValues[1])
-						bpos3=(5,8.65,zValues[2])
-						bpos4=(10,8.75,zValues[3])
-						bpos5=(10,0,zValues[4])
-						bpos6=(5,0,zValues[5])
+						bpos2=(0,4.95,zValues[1])
+						bpos3=(4.65,4.95,zValues[2])
+						bpos4=(-1.16,2.2,zValues[3])
+						bpos5=(4.75,0,zValues[4])
+						bpos6=(2.25,-2.5,zValues[5])
 							
 						#these are the raw latest differences
 						delta_dist[i] = (msg_dDist[0],msg_dDist[1],msg_dDist[2],msg_dDist[3],msg_dDist[4])
@@ -148,6 +149,7 @@ def calcPos(zValues):
 					UDPMESSAGE = b"0;2;12;13;5\n" #status_nrf;status_pi;posX;posY;posZ
 		else:
 			UDPMESSAGE = bytearray("NoData;".encode())
+			print("No data")
 			sock.sendto(UDPMESSAGE, (UDP_IP, UDP_PORT))
 
 		iteration+=1
