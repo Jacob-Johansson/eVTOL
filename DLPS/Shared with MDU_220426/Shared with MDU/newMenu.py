@@ -1,6 +1,6 @@
 import csv
 import math
-#from CalcAndCollect import *
+from CalcAndCollect import *
 
 
 def writeToFileHeader(rawErrorWriter):
@@ -32,8 +32,7 @@ def getZValues():
             else:
                 input("Confirm height is: "+str(round(float(row[2]) - 0.17,2)))
             #Get values for tag height
-            #estimatedValues = calcPos(anchorsZPosition)
-            estimatedValues = [(0,0,0),(1,1,1)]
+            estimatedValues = calcPos(anchorsZPosition)
             index = 1
             #Write values to csv file
             for values in estimatedValues:
