@@ -6,9 +6,10 @@ import math
 def writeToFileHeader(rawErrorWriter):
     rawErrorWriter.writerow(["Row", "Iteration", "Actual x", "Actual y", "Actual z", "Estimated x", "Estimated y", "Estimated z"])
 
-def writeToFile(rawErrorWriter, row, iteration, actualX, actualY, actualZ, estimatedX, estimatedY, estimatedZ):
-
-    rawErrorWriter.writerow([str(row), str(iteration), str(actualX), str(actualY), str(actualZ), str(estimatedX), str(estimatedY), str(estimatedZ)])
+def writeToFile(row, iteration, actualX, actualY, actualZ, estimatedX, estimatedY, estimatedZ):
+    with open('rawData.csv', 'a', newline='') as f:
+        writer = csv.writer(f)
+        writer.writerow([str(row+1), str(iteration), str(actualX), str(actualY), str(actualZ), str(estimatedX), str(estimatedY), str(estimatedZ)])
 
 def getZValues():
     with open('generatedPositions.csv', 'r') as file:
@@ -36,7 +37,7 @@ def getZValues():
             index = 1
             #Write values to csv file
             for values in estimatedValues:
-                writeToFile(rawErrorWriter, z, index,row[0], row[1], row[2], values[0], values[1], values[2])
+                writeToFile(z, index,row[0], row[1], row[2], values[0], values[1], values[2])
                 index += 1
             z+=1
         
