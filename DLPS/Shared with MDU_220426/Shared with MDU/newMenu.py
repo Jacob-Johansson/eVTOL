@@ -1,6 +1,7 @@
 import csv
 import math
 from CalcAndCollect import *
+from barometer_get_pressure import get_pressure
 
 
 def writeToFileHeader(rawErrorWriter):
@@ -24,7 +25,7 @@ def getZValues():
         rawErrorWriter = csv.writer(rawErrorFileHandler)
 
         #Write header if it is first row
-        if(z == 0):
+        if(len(dataList) == 0):
             writeToFileHeader(rawErrorWriter)
         for row in dataList:
             if (z%11 == 0):
@@ -33,10 +34,12 @@ def getZValues():
                 input("Confirm height is: "+str(round(float(row[2]) - 0.17,2)))
             #Get values for tag height
             estimatedValues = calcPos(anchorsZPosition)
+            pressure = get_pressure()
+
             index = 1
             #Write values to csv file
             for values in estimatedValues:
-                writeToFile(z, index,row[0], row[1], row[2], values[0], values[1], values[2])
+                writeToFile(z, index,row[0], row[1], row[2], values[0], values[1], values[2], pressure)
                 index += 1
             z+=1
         
