@@ -5,12 +5,12 @@ from barometer_get_pressure import get_pressure
 
 
 def writeToFileHeader(rawErrorWriter):
-    rawErrorWriter.writerow(["Row", "Iteration", "Actual x", "Actual y", "Actual z", "Estimated x", "Estimated y", "Estimated z"])
+    rawErrorWriter.writerow(["Row", "Iteration", "Actual x", "Actual y", "Actual z", "Estimated x", "Estimated y", "Estimated z", "Pressure"])
 
-def writeToFile(row, iteration, actualX, actualY, actualZ, estimatedX, estimatedY, estimatedZ):
+def writeToFile(row, iteration, actualX, actualY, actualZ, estimatedX, estimatedY, estimatedZ, pressure):
     with open('rawData.csv', 'a', newline='') as f:
         writer = csv.writer(f)
-        writer.writerow([str(row+1), str(iteration), str(actualX), str(actualY), str(actualZ), str(estimatedX), str(estimatedY), str(estimatedZ)])
+        writer.writerow([str(row+1), str(iteration), str(actualX), str(actualY), str(actualZ), str(estimatedX), str(estimatedY), str(estimatedZ), str(pressure)])
 
 def getZValues():
     with open('generatedPositions.csv', 'r') as file:
