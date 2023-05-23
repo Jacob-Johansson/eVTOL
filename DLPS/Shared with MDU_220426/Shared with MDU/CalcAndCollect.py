@@ -129,7 +129,7 @@ def calcPos(zValues):
 							msgstr_6 = str(msg_statuscode)+";"+str(int(array_pointer.contents[4]))+";"+str(array_pointer.contents[0])+";"+str(array_pointer.contents[1])+";"+str(array_pointer.contents[2])+";"+str(bpos1)+";"+str(bpos2)+";"+str(bpos3)+";"+str(bpos4)+";"+str(bpos5)+";"+str(bpos6)+";"+str(msg_dDist)+"\n"
 							
 							#Add estimated position to array
-							estimatedPosArray.append((array_pointer.contents[0], array_pointer.contents[1], array_pointer.contents[2]))
+							estimatedPosArray.append((array_pointer.contents[0], array_pointer.contents[1], array_pointer.contents[2], msg_dDist[0],msg_dDist[1],msg_dDist[2],msg_dDist[3],msg_dDist[4], msg_b1pos, msg_b2pos, msg_b3pos, msg_b4pos, msg_b5pos, msg_b6pos))
 
 							#send on of the strings (5 or 6 beacons) as an UDP message. 
 							UDPMESSAGE = bytearray(msgstr_6.encode())
