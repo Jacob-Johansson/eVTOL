@@ -9,11 +9,11 @@ from keras.layers import Dense
 
 print(tensorflow.__version__)
 
-dataset = pandas.read_csv('rawErrorData.csv')
+dataset = pandas.read_csv('finalDataset.csv')
 dataset.head()
 
-actuals = dataset.iloc[:, 3:6]
-estimated = dataset.iloc[:, 6:9]
+actuals = dataset.iloc[:, 2:4]
+estimated = dataset.iloc[:, 29:31]
 
 print(actuals)
 
