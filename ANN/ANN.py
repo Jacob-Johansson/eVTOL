@@ -59,7 +59,7 @@ ann_array = [
     create_ann([9, 3], [tf.keras.activations.tanh, tf.keras.activations.relu], input_shape)
 ]
 
-num_epochs = 100
+num_epochs = 90
 
 history_array = []
 
@@ -70,7 +70,7 @@ history_array = []
 # Train the ann's
 for i in range(0, len(ann_array)):
     ann_array[i].compile(optimizer='sgd', loss=tf.keras.losses.MeanSquaredError(), metrics=[tf.keras.metrics.MeanSquaredError()])
-    history_array.append(ann_array[i].fit(x_train, y_train, epochs=num_epochs, callbacks=[tf.keras.callbacks.LearningRateScheduler(lambda epoch: 1e-3 * 10 ** (epoch / 30))]))
+    history_array.append(ann_array[i].fit(x_train, y_train, epochs=num_epochs, validation_split=0.1, callbacks=[tf.keras.callbacks.LearningRateScheduler(lambda epoch: 1e-3 * 10 ** (epoch / 30))]))
 
 # Visualize & evaluate the model
 import matplotlib.pyplot as plt
@@ -86,6 +86,8 @@ import csv
 for i in range(0, len(ann_array)):
     history = history_array[i]
     ann = ann_array[i]
+
+    print(history.history.keys())
 
     # Evaluate the model
     y_predicted = ann.predict(x_test)
@@ -103,6 +105,12 @@ for i in range(0, len(ann_array)):
     #    history.history['loss'],
     #    label='Loss '+str(i), lw=3
     #)
+    plt.plot(
+        numpy.arange(1, num_epochs + 1),
+        history.history['val_loss'],
+        label='Validation loss'+str(i), lw=3
+    )
+
     plt.plot(
         numpy.arange(1, num_epochs + 1),
         history.history['mean_squared_error'],
