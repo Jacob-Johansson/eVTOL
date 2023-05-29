@@ -54,9 +54,9 @@ x_test = sc.transform(x_test)
 input_shape = x_train[0].shape
 
 ann_array = [
-    create_ann([512, 512, 3], [tf.keras.activations.tanh, tf.keras.activations.relu, tf.keras.activations.relu], input_shape),
-    create_ann([9, 9, 3], [tf.keras.activations.tanh, tf.keras.activations.relu, tf.keras.activations.relu], input_shape),
-    create_ann([9, 3], [tf.keras.activations.tanh, tf.keras.activations.relu], input_shape)
+    create_ann([512, 512, 512, 3], [tf.keras.activations.tanh, tf.keras.activations.relu, tf.keras.activations.relu, tf.keras.activations.relu], input_shape),
+    create_ann([128, 128, 128, 3], [tf.keras.activations.tanh, tf.keras.activations.relu, tf.keras.activations.relu, tf.keras.activations.relu], input_shape),
+    create_ann([512, 512, 512, 512, 3], [tf.keras.activations.tanh, tf.keras.activations.relu, tf.keras.activations.relu, tf.keras.activations.relu, tf.keras.activations.relu], input_shape)
 ]
 
 num_epochs = 90
@@ -69,8 +69,8 @@ history_array = []
 
 # Train the ann's
 for i in range(0, len(ann_array)):
-    ann_array[i].compile(optimizer='sgd', loss=tf.keras.losses.MeanSquaredError(), metrics=[tf.keras.metrics.MeanSquaredError()])
-    history_array.append(ann_array[i].fit(x_train, y_train, epochs=num_epochs, validation_split=0.1, callbacks=[tf.keras.callbacks.LearningRateScheduler(lambda epoch: 1e-3 * 10 ** (epoch / 30))]))
+    ann_array[i].compile(optimizer=keras.optimizers.SGD(), loss=tf.keras.losses.MeanSquaredError(), metrics=[tf.keras.metrics.MeanSquaredError()])
+    history_array.append(ann_array[i].fit(x_train, y_train, epochs=num_epochs, validation_split=0.2, shuffle=True, callbacks=[tf.keras.callbacks.LearningRateScheduler(lambda epoch: 1e-3 * 10 ** (epoch / 30))]))
 
 # Visualize & evaluate the model
 import matplotlib.pyplot as plt
@@ -116,6 +116,7 @@ for i in range(0, len(ann_array)):
         history.history['mean_squared_error'],
         label='Mean Square Error '+str(i), lw=3
     )
+
     #plt.plot(
     #    numpy.arange(1, num_epochs + 1),
     #    history.history['lr'],
